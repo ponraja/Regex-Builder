@@ -1,0 +1,285 @@
+﻿<UserControl x:Class="RegexBuilder.Modules.Library.Views.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:view="clr-namespace:RegexBuilder.Modules.Library.Views"
+             xmlns:helpers="clr-namespace:RegexBuilder.Modules.Library.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+
+            <Style x:Key="{x:Type DataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackground}" />
+                <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForeground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridGridLines}" />
+                <Setter Property="BorderThickness" Value="0,0,0,3" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
+                <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+                <Setter Property="Padding" Value="4,3,4,3"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                            <Grid>
+                                <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding ="{TemplateBinding Padding}">
+                                    <Grid x:Name="containerGrid" Margin="5" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter Grid.Column="0" 
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        <Path x:Name="SortArrow"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Width="8" Height="6"  Margin="5,0,5,0"
+                                      Stretch="Fill" Opacity="0.5" Fill="{TemplateBinding Foreground}"
+                                      RenderTransformOrigin="0.5,0.4"
+                                      Visibility="Hidden"
+                                      Data="M0,0 L1,0 0.5,1 z" />
+                                    </Grid>
+                                </Border>
+                                <Thumb x:Name="PART_LeftHeaderGripper"
+                               HorizontalAlignment="Left"
+                               Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                                <Thumb x:Name="PART_RightHeaderGripper"
+                               HorizontalAlignment="Right"
+                               Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="SortDirection" Value="Ascending">
+                                    <Setter TargetName="SortArrow" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="SortArrow" Property="RenderTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="180" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Descending">
+                                    <Setter TargetName="SortArrow" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
+                <Setter Property="Background" Value="{x:Null}" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="Foreground" Value="{DynamicResource DataGridCellForeground}" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{x:Null}" />
+                        <Setter Property="BorderBrush" Value="{x:Null}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="{x:Type DataGridRowHeader}" TargetType="{x:Type DataGridRowHeader}">
+                <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackground}" />
+                <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForeground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridGridLines}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Width" Value="16"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridRowHeader}">
+                            <Grid>
+                                <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding ="{TemplateBinding Padding}">
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                        <Control SnapsToDevicePixels="false"
+                                         Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=(Validation.HasError), Converter={StaticResource BooleanToVisibilityConverter}}"
+                                         Template="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=ValidationErrorTemplate}" />
+                                    </StackPanel>
+                                </Border>
+                                <Thumb x:Name="PART_TopHeaderGripper"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource RowHeaderGripperStyle}"/>
+                                <Thumb x:Name="PART_BottomHeaderGripper"
+                               VerticalAlignment="Bottom"
+                               Style="{StaticResource RowHeaderGripperStyle}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundHover}" />
+                        <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForegroundHover}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundPressed}" />
+                        <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForegroundPressed}" />
+                    </Trigger>
+                    <Trigger Property="IsRowSelected" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource DataGridHeaderBackgroundSelected}" />
+                        <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForegroundSelected}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="{x:Type DataGridRow}" TargetType="{x:Type DataGridRow}">
+                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnPreviewMouseLeftButtonDown"/>
+                <Setter Property="Background" Value="{x:Null}" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="Foreground" Value="Black" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{x:Null}" />
+                        <Setter Property="BorderBrush" Value="{x:Null}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+        </Grid.Resources>
+        <DataGrid ItemsSource="{Binding RegularExpressions}" CanUserAddRows="False" CanUserDeleteRows="False"
+                  CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" 
+                  SelectedItem="{Binding Path=SelectedRegularExpression, Mode=TwoWay}" SelectionMode="Single"
+                  IsReadOnly="True" RowHeight="30" RowDetailsVisibilityMode="Visible" HeadersVisibility="All" 
+                  GridLinesVisibility="None">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="Auto" />
+                <DataGridTextColumn Binding="{Binding Expression}" Header="Regex" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextTrimming" Value="WordEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Margin="10,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Description: " FontWeight="SemiBold" FontStyle="Italic"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Description}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Examples: " FontWeight="SemiBold" FontStyle="Italic"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,0,0,0" Text="Matches: " FontStyle="Italic"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Matches}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,0" Text="Non-Matches: " FontStyle="Italic"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding NonMatches}"/>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Button BorderThickness="0" Padding="0" MaxHeight="20" MaxWidth="20" Command="{Binding Path=DataContext.CopyRegularExpressionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" CommandParameter="{Binding}">
+                                <Path Data="M31.687001,23.116L31.687001,31.394341C31.687001,31.394341,31.526705,36.832023,25.52624,36.359949L18.506,36.388395 18.506,49.587002 18.506001,54.153999 18.506,59.292614C18.506,59.812107,18.929218,60.233997,19.448625,60.233997L45.808704,60.233997C46.326101,60.233997,46.749998,59.812107,46.749998,59.292614L46.749998,24.057384C46.749998,23.539322,46.326101,23.116,45.808704,23.116z M20.552001,4.5669994L20.552001,14.60861C20.552001,14.60861,20.358706,21.203206,13.080177,20.631915L4.565999,20.665694 4.565999,48.4459C4.566,49.076302,5.0797424,49.587002,5.7100554,49.587002L14.742001,49.587002 14.742001,35.400336 18.161097,31.792807 18.166127,31.774705 26.474542,22.972 26.521163,22.972 29.953973,19.349999 38.822001,19.349999 38.822001,5.7076302C38.822001,5.0806808,38.309198,4.5669994,37.680792,4.5669994z M18.449971,0L37.680651,0C40.833681,0,43.391001,2.5571156,43.391001,5.707489L43.391001,19.349999 45.80884,19.349999C48.409018,19.35,50.517,21.458894,50.517,24.05704L50.517,59.292992C50.517,61.893593,48.409018,64,45.80884,64L19.448812,64C16.849223,64,14.742,61.893593,14.742001,59.292992L14.742001,54.153999 5.709774,54.153999C2.555994,54.153999,0,51.599316,0,48.445534L0,19.465691 4.1473293,15.090039 4.1532602,15.068708 14.229262,4.3929996 14.286199,4.3929996z" 
+                                      Stretch="Uniform" Width="16" Height="16" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                            </Button>
+                            <Button Grid.Row="1" BorderThickness="0" Padding="0" MaxHeight="20" MaxWidth="20" Command="{Binding Path=DataContext.EditRegularExpressionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" CommandParameter="{Binding}">
+                                <Path Data="M0,44.439791L18.98951,54.569246 0.47998798,62.66881z M17.428029,12.359973L36.955557,23.568769 21.957478,49.686174 20.847757,46.346189 15.11851,45.756407 14.138656,42.166935 8.5292659,41.966761 6.9493899,38.037481 2.4399572,38.477377z M26.812517,0.0009765625C27.350616,-0.012230873,27.875986,0.10826397,28.348372,0.3782568L42.175028,8.3180408C43.85462,9.2780154,44.234529,11.777948,43.02482,13.89789L41.375219,16.767812 21.460039,5.3381228 23.10964,2.4582005C23.979116,0.941679,25.437378,0.034730911,26.812517,0.0009765625z"
+                                      Stretch="Uniform" Width="16" Height="16" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                            </Button>
+                            <Button Grid.Row="2" BorderThickness="0" Padding="0" MaxHeight="20" MaxWidth="20" Command="{Binding Path=DataContext.DeleteRegularExpressionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" CommandParameter="{Binding}">
+                                <Path Data="M51.527958,0L64,12.4741 44.47221,32.001027 64,51.52871 51.528,64.000001 32.000016,44.472668 12.471823,64.000001 0.0010004044,51.528802 19.528015,32.001088 0,12.473726 12.472,0.0010004044 31.999884,19.528773z"
+                                      Stretch="Uniform" Width="16" Height="16" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                            </Button>
+                        </Grid>
+                        <Rectangle Grid.ColumnSpan="3" Fill="{DynamicResource DataGridGridLines}"
+                                   Height="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+                    </Grid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25" Margin="5" Command="{Binding AddRegularExpressionCommand}">
+                <Path Data="M19.833,0L32.501,0 32.501,19.833999 52.334,19.833999 52.334,32.500999 32.501,32.500999 32.501,52.333 19.833,52.333 19.833,32.500999 0,32.500999 0,19.833999 19.833,19.833999z" 
+                                      Stretch="Uniform" Width="20" Height="20" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+            </Button>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="5" Text="{Binding Path=SelectedRegularExpression.Title, StringFormat=You have selected: {0}.}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedRegularExpression}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Button Grid.Column="2" Content="Select" HorizontalAlignment="Right" Margin="5" Command="{Binding SelectedRegularExpressionCommand}"/>
+            <Button Grid.Column="3" Content="Cancel" HorizontalAlignment="Right" Margin="5" Command="{Binding CancelCommand}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Background="#80000000">
+            <i:Interaction.Triggers>
+                <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest, Mode=OneWay}">
+                    <helpers:ErrorTriggerAction>
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1"
+                                BorderBrush="#FF2E4C7A"
+                                CornerRadius="5 5 0 0"
+                                Background="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="35" />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#FFE8E8E8"
+                                        BorderThickness="0"
+                                        Margin="0"
+                                        CornerRadius="4 4 0 0">
+                                    <TextBlock Text="{Binding Title}" Margin="5"/>
+                                </Border>
+                                <Grid Grid.Row="1">
+                                    <TextBlock Text="{Binding Message}" Margin="5"/>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right">
+                                    <Button Content="Yes" Grid.Column="0" HorizontalAlignment="Right" Margin="5" Command="{Binding YesCommand}"/>
+                                    <Button Content="No" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Command="{Binding NoCommand}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </helpers:ErrorTriggerAction>
+                </prism:InteractionRequestTrigger>
+            </i:Interaction.Triggers>
+        </Grid>
+    </Grid>
+</UserControl>

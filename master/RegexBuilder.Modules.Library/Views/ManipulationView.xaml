@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="RegexBuilder.Modules.Library.Views.ManipulationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition MinHeight="85"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Title: " Margin="5" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RegularExpression.Title}" Margin="5" 
+                 VerticalContentAlignment="Center"/>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Expression: " Margin="5,0" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Text="{Binding RegularExpression.Expression}" Margin="5" TextWrapping="Wrap" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center"/>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Description: " Margin="5" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RegularExpression.Description}" Margin="5" 
+                 AcceptsReturn="True" VerticalContentAlignment="Center"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Matches: " Margin="5" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding RegularExpression.Matches}" Margin="5"
+                 VerticalContentAlignment="Center"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="NonMatches: " Margin="5" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding RegularExpression.NonMatches}" Margin="5"
+                 VerticalContentAlignment="Center"/>
+
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Right" Content="Add" Margin="5" Height="30" Command="{Binding AddRegularExpressionCommand}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsAddingNewItem}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button HorizontalAlignment="Right" Content="Update" Margin="5" Height="30" Command="{Binding UpdateRegularExpressionCommand}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsAddingNewItem}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Column="1" HorizontalAlignment="Right" Content="Cancel" Margin="5" Height="30" Command="{Binding CancelCommand}"/>
+        </Grid>
+
+    </Grid>
+</UserControl>

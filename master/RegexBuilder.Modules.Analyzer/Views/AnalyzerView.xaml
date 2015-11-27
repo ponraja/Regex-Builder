@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="RegexBuilder.Modules.Analyzer.Views.AnalyzerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:interactivity="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:control="clr-namespace:RegexBuilder.Infrastructure.Controls;assembly=RegexBuilder.Infrastructure"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Regex" Margin="5"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <control:AutoCompleteTextBox Text="{Binding RegexPattern, UpdateSourceTrigger=PropertyChanged}" 
+                 WaterMarkText="Enter Regex or type name for suggestions.." ItemsSource="{Binding RegularExpressions}"
+                 ValueMemberPath="Expression" Margin="5,0" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <interactivity:Interaction.Triggers>
+                    <interactivity:EventTrigger EventName="TextChanged">
+                        <interactivity:InvokeCommandAction Command="{Binding ValidateRegex}"/>
+                    </interactivity:EventTrigger>
+                </interactivity:Interaction.Triggers>
+                <control:AutoCompleteTextBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Title}" TextTrimming="WordEllipsis" Margin="5" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Expression}" TextTrimming="WordEllipsis" Margin="5" Grid.Row="1"/>
+                        </Grid>
+                    </DataTemplate>
+                </control:AutoCompleteTextBox.ItemTemplate>
+            </control:AutoCompleteTextBox>
+            <Grid Grid.Column="1" Margin="5,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Button BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25" Command="{Binding OpenLibrary}">
+                    <Path Data="M0,3.0619874L2.6669586,3.0619874 2.6669586,43.141998 3.4649466,43.141998C23.717642,43.141998,30.017548,47.284,31.867522,49.266998L34.847476,49.266998C36.717448,47.294998,43.057354,43.141998,63.197052,43.141998L63.99704,43.141998 63.99704,3.0619874 66.667,3.0619874 66.667,45.807998 63.197052,45.807998C41.117383,45.807998,36.957444,50.799999,36.55745,51.369003L36.157458,51.933002 30.537541,51.933002 30.137547,51.351002C29.977549,51.125004,26.097607,45.807998,3.4649466,45.807998L0,45.807998z M5.1540136,1.9868314E-06C26.964764,0.28399898,31.1841,6.2569917,31.744013,7.2319978L31.744013,45.206001C28.18455,42.587013,20.730653,39.549019,5.1540136,39.345009z M61.507027,0L61.507027,39.34502C45.927605,39.54903,38.477879,42.587024,34.918017,45.206013L34.918017,7.2460049C35.52804,6.1799949,39.857831,0.28399615,61.507027,0z"
+                                      Stretch="Uniform" Width="20" Height="20" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                </Button>
+                <Grid Grid.Row="1">
+                    <Button BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25" Command="{Binding AddRegularExpressionCommand}">
+                        <Path Data="M19.833,0L32.501,0 32.501,19.833999 52.334,19.833999 52.334,32.500999 32.501,32.500999 32.501,52.333 19.833,52.333 19.833,32.500999 0,32.500999 0,19.833999 19.833,19.833999z" 
+                                      Stretch="Uniform" Width="20" Height="20" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                    </Button>
+                    <Button BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25" Visibility="Collapsed">
+                        <Path Data="M58.087635,37.91074L47.872219,48.125874 43.038265,43.283699 41.153744,45.166451 47.872219,51.884777 59.972256,39.793491z M50.563049,31.73C57.949932,31.73 64,37.779644 64,45.166451 64,52.553158 57.949932,58.603001 50.563049,58.603001 43.176067,58.603001 37.125999,52.553158 37.125999,45.166451 37.125999,37.779644 43.176067,31.73 50.563049,31.73z M33.032001,0L40.381001,0 40.381001,16.236 33.032001,16.236z M5.0388451,0L13.576872,0 13.576872,15.676368C13.576872,17.995482,15.456882,19.875292,17.775993,19.875292L39.191006,19.875292C41.510117,19.875292,43.389931,17.995482,43.389931,15.676368L43.389931,0 49.177559,0 56.966999,7.789382 56.966999,30.375652C55.002491,29.522047 52.83918,29.042944 50.564068,29.042944 41.672218,29.042944 34.440281,36.274784 34.440281,45.166538 34.440281,49.536861 36.193592,53.500183 39.026005,56.407002L5.0388451,56.407002C2.255872,56.407002,0,54.150986,0,51.368172L0,5.038847C0,2.2558709,2.255872,4.6670634E-08,5.0388451,0z" 
+                                      Stretch="Uniform" Width="20" Height="20" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                    </Button>
+                </Grid>
+                <Button Grid.Row="2" BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25">
+                    <Path Data="M31.687001,23.116L31.687001,31.394341C31.687001,31.394341,31.526705,36.832023,25.52624,36.359949L18.506,36.388395 18.506,49.587002 18.506001,54.153999 18.506,59.292614C18.506,59.812107,18.929218,60.233997,19.448625,60.233997L45.808704,60.233997C46.326101,60.233997,46.749998,59.812107,46.749998,59.292614L46.749998,24.057384C46.749998,23.539322,46.326101,23.116,45.808704,23.116z M20.552001,4.5669994L20.552001,14.60861C20.552001,14.60861,20.358706,21.203206,13.080177,20.631915L4.565999,20.665694 4.565999,48.4459C4.566,49.076302,5.0797424,49.587002,5.7100554,49.587002L14.742001,49.587002 14.742001,35.400336 18.161097,31.792807 18.166127,31.774705 26.474542,22.972 26.521163,22.972 29.953973,19.349999 38.822001,19.349999 38.822001,5.7076302C38.822001,5.0806808,38.309198,4.5669994,37.680792,4.5669994z M18.449971,0L37.680651,0C40.833681,0,43.391001,2.5571156,43.391001,5.707489L43.391001,19.349999 45.80884,19.349999C48.409018,19.35,50.517,21.458894,50.517,24.05704L50.517,59.292992C50.517,61.893593,48.409018,64,45.80884,64L19.448812,64C16.849223,64,14.742,61.893593,14.742001,59.292992L14.742001,54.153999 5.709774,54.153999C2.555994,54.153999,0,51.599316,0,48.445534L0,19.465691 4.1473293,15.090039 4.1532602,15.068708 14.229262,4.3929996 14.286199,4.3929996z" 
+                                      Stretch="Uniform" Width="20" Height="20" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="Enter your Text" Margin="5"/>
+        <TextBox Grid.Row="3" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="5,0"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <interactivity:Interaction.Triggers>
+                <interactivity:EventTrigger EventName="TextChanged">
+                    <interactivity:InvokeCommandAction Command="{Binding ValidateRegex}"/>
+                </interactivity:EventTrigger>
+            </interactivity:Interaction.Triggers>
+        </TextBox>
+
+        <TextBlock Grid.Row="4" Text="Result" Margin="5"/>
+        <control:BindableRichTextBox Grid.Row="5" Document="{Binding InputFlowDocument}" AcceptsReturn="True" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"  IsReadOnly="True" Margin="5,0"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</UserControl>
